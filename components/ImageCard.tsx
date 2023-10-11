@@ -10,7 +10,7 @@ type ImageCardProps = {
 
 export default function ImageCard({ image, onDelete }: ImageCardProps) {
   return (
-    <Card isFooterBlurred radius="lg" className="border-none max-w-[200px]">
+    <Card isFooterBlurred radius="lg" className="max-w-[200px] border-none">
       <Image
         alt={image.filename}
         className="object-cover"
@@ -18,10 +18,12 @@ export default function ImageCard({ image, onDelete }: ImageCardProps) {
         height={200}
         width={200}
       />
-      <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-        <p className="line-clamp-1 text-tiny text-white/80">{image.filename}</p>
+      <CardFooter className="absolute bottom-1 z-10 ml-1 w-[calc(100%_-_8px)] justify-between overflow-hidden rounded-large border-1 border-white/20 py-1 shadow-small before:rounded-xl before:bg-white/10">
+        <p className="line-clamp-1 text-tiny text-white/80">
+          {image.filename.split("_")[1]}
+        </p>
         <Button
-          className="text-tiny text-white bg-black/20"
+          className="bg-black/20 text-tiny text-white"
           variant="flat"
           color="default"
           radius="lg"

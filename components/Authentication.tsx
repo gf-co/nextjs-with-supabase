@@ -1,51 +1,64 @@
 "use client";
 
+import { useNotification } from "@/contexts/NotificationProvider";
+import { useUser } from "@/contexts/UserProvider";
 import type { Database } from "@/lib/database.types";
 import { Avatar } from "@nextui-org/avatar";
 import { Button } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
 import { Input } from "@nextui-org/input";
-import {
-  User,
-  createClientComponentClient,
-} from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
+import AuthenticationSkeleton from "./AuthenticationSkeleton";
 
 export default function Authentication() {
-  const router = useRouter();
   const supabase = createClientComponentClient<Database>();
-  const [user, setUser] = useState<User | null>(null);
+  const { user, setUser, isLoading } = useUser();
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const { showNotification } = useNotification();
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSigningIn(true);
+
     try {
       const data = new FormData(event.currentTarget);
 
       const {
         data: { user },
+        error,
       } = await supabase.auth.signInWithPassword({
         email: data.get("email") as string,
         password: data.get("password") as string,
       });
 
+      if (error) throw error;
+
       setUser(user);
 
-      router.refresh();
+      showNotification("Sign in success");
     } catch {
-      alert("Sign in error");
+      showNotification("Sign in error");
+    } finally {
+      setIsSigningIn(false);
     }
   };
 
   const handleSignOut = async () => {
+    setIsSigningOut(true);
     try {
       await supabase.auth.signOut();
       setUser(null);
-      router.refresh();
+      showNotification("Sign out success");
     } catch {
-      alert("Sign in error");
+      showNotification("Sign out error");
+    } finally {
+      setIsSigningOut(false);
     }
   };
+
+  if (isLoading) return <AuthenticationSkeleton />;
 
   return (
     <div className="flex flex-col gap-4">
@@ -58,17 +71,31 @@ export default function Authentication() {
           name="email"
           label="Email"
           value="example@email.com"
-          disabled={!!user}
+          disabled={!!user || isSigningIn || isSigningOut}
+          readOnly={!!user || isSigningIn || isSigningOut}
+          isReadOnly={!!user || isSigningIn || isSigningOut}
+          isDisabled={!!user || isSigningIn || isSigningOut}
+          required={true}
+          isRequired={true}
         />
         <Input
           type="password"
           name="password"
           label="Password"
           value="example@email.com"
-          disabled={!!user}
+          disabled={!!user || isSigningIn || isSigningOut}
+          readOnly={!!user || isSigningIn || isSigningOut}
+          isReadOnly={!!user || isSigningIn || isSigningOut}
+          isDisabled={!!user || isSigningIn || isSigningOut}
+          required={true}
+          isRequired={true}
         />
-
-        <Button disabled={!!user} type="submit">
+        <Button
+          isLoading={isSigningIn}
+          disabled={!!user || isSigningIn || isSigningOut}
+          isDisabled={!!user || isSigningIn || isSigningOut}
+          type="submit"
+        >
           Sign in
         </Button>
       </form>
@@ -87,7 +114,13 @@ export default function Authentication() {
         {!user && (
           <small className="text-sm opacity-50">You are not signed in</small>
         )}
-        <Button disabled={!user} className="ml-auto" onClick={handleSignOut}>
+        <Button
+          isLoading={isSigningOut}
+          disabled={!user || isSigningIn || isSigningOut}
+          isDisabled={!user || isSigningIn || isSigningOut}
+          className="ml-auto"
+          onClick={handleSignOut}
+        >
           Log out
         </Button>
       </div>

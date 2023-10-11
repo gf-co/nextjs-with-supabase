@@ -1,86 +1,112 @@
 "use client";
 
-import { Button } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
+import { useNotification } from "@/contexts/NotificationProvider";
+import { useUser } from "@/contexts/UserProvider";
+import { Database } from "@/lib/database.types";
 import { Input } from "@nextui-org/input";
-import { useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect, useState } from "react";
+import RealtimeSkeleton from "./RealtimeSkeleton";
 
-type Item = {
-  name: string;
-  id: string;
-};
+type Item = Database["public"]["Tables"]["tasks"]["Row"];
 
 export default function Realtime() {
-  const [items, setItems] = useState<Item[]>([
-    {
-      id: "1",
-      name: "Something 1",
-    },
-    {
-      id: "2",
-      name: "Something 2",
-    },
-  ]);
+  const [isFetching, setIsFetching] = useState(true);
+  const supabase = createClientComponentClient<Database>();
+  const { user, isLoading } = useUser();
+  const [items, setItems] = useState<Item[]>([]);
+  const { showNotification } = useNotification();
 
-  const handleAddItem = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  useEffect(() => {
+    const getData = async () => {
+      if (!isLoading) {
+        return;
+      }
 
-    const data = new FormData(event.currentTarget);
-    const itemName = data.get("itemName") as string;
-    const newItem = {
-      id: (items.length + 1).toString(),
-      name: itemName,
+      if (!user) {
+        setIsFetching(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("items")
+          .select("*")
+          .eq("user_id", user.id);
+
+        if (error) throw error;
+
+        return setItems(data);
+      } catch {
+        showNotification("Get items from database failed");
+      } finally {
+        setIsFetching(false);
+      }
     };
-    setItems([...items, newItem]);
-  };
 
-  const handleUpdateItem = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    getData();
+  }, [user]);
 
-    const data = new FormData(event.currentTarget);
-    const itemName = data.get("itemName") as string;
-    const newItem = {
-      id: (items.length + 1).toString(),
-      name: itemName,
+  // Realtime listener for database changes. Automatically updates the items state.
+  useEffect(() => {
+    // References: https://supabase.com/docs/guides/realtime/postgres-changes#table-changes
+    const channel = supabase
+      .channel("table-db-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "items" },
+        (payload) =>
+          setItems((prevItems) => {
+            if (payload.eventType === "INSERT") {
+              const newPayload =
+                payload.new as Database["public"]["Tables"]["tasks"]["Row"];
+              return [...prevItems, newPayload];
+            } else if (payload.eventType === "UPDATE") {
+              const updatedPayload =
+                payload.new as Database["public"]["Tables"]["tasks"]["Row"];
+              return prevItems.map((item) =>
+                item.id === updatedPayload.id ? updatedPayload : item,
+              );
+            } else if (payload.eventType === "DELETE") {
+              const deletedPayload =
+                payload.old as Database["public"]["Tables"]["tasks"]["Row"];
+              return prevItems.filter((item) => item.id !== deletedPayload.id);
+            }
+            return prevItems;
+          }),
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
-    setItems([...items, newItem]);
-  };
+  }, [supabase, setItems, items]);
 
-  const handleDeleteItem = (id: string) => {
-    const newItems = items.filter((item) => item.id !== id);
-    setItems(newItems);
-  };
+  if (isFetching) return <RealtimeSkeleton />;
 
   return (
     <div className="flex flex-col gap-4">
       <small className="text-sm opacity-50">
-        Uses Supabase Realtime to update the list in real time
+        Uses Supabase Realtime to listen for database updates from above.
       </small>
-
+      {!items.length && (
+        <p className="text-sm opacity-50">No items in the database yet</p>
+      )}
       {items.map((item) => (
-        <form onSubmit={handleUpdateItem} className="flex flex-nowrap gap-1">
-          <Input name="itemName" type="text" size="md" value={item.name} />
-          <Button type="submit">Update</Button>
-          <Button type="button" onClick={() => handleDeleteItem(item.id)}>
-            Delete
-          </Button>
+        <form key={item.id} className="flex flex-nowrap gap-1">
+          <input type="hidden" name="itemId" value={item.id} />
+          <Input
+            name="itemName"
+            type="text"
+            size="md"
+            value={item.name}
+            readOnly={true}
+            isReadOnly={true}
+            disabled={true}
+            isDisabled={true}
+          />
         </form>
       ))}
-      <Divider />
-      <form
-        onSubmit={handleAddItem}
-        className="flex flex-nowrap gap-4 items-center"
-      >
-        <Input
-          name="itemName"
-          type="text"
-          placeholder="Add something"
-          size="md"
-        />
-        <Button type="submit" className="ml-auto">
-          Create
-        </Button>
-      </form>
     </div>
   );
 }
