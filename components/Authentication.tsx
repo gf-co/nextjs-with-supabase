@@ -1,6 +1,7 @@
 "use client";
 
 import { useNotification } from "@/contexts/NotificationProvider";
+import { useUserCredentials } from "@/contexts/UserCredentialsProvider";
 import { useUser } from "@/contexts/UserProvider";
 import type { Database } from "@/lib/database.types";
 import { Avatar } from "@nextui-org/avatar";
@@ -14,23 +15,35 @@ import AuthenticationSkeleton from "./AuthenticationSkeleton";
 export default function Authentication() {
   const supabase = createClientComponentClient<Database>();
   const { user, setUser, isLoading } = useUser();
+  const { userCredentials } = useUserCredentials();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const { showNotification } = useNotification();
 
-  const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSignInAnonymously = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
     setIsSigningIn(true);
 
     try {
       const data = new FormData(event.currentTarget);
+      const email = data.get("email") as string;
+      const password = data.get("password") as string;
+
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (signUpError) throw signUpError;
 
       const {
         data: { user },
         error,
       } = await supabase.auth.signInWithPassword({
-        email: data.get("email") as string,
-        password: data.get("password") as string,
+        email,
+        password,
       });
 
       if (error) throw error;
@@ -65,16 +78,20 @@ export default function Authentication() {
       <small className="text-sm opacity-50">
         Sign in using the example account
       </small>
-      <form onSubmit={handleSignIn} className="flex flex-col gap-4">
+      <form onSubmit={handleSignInAnonymously} className="flex flex-col gap-4">
         <Input
           type="email"
           name="email"
           label="Email"
-          value="example@email.com"
-          disabled={!!user || isSigningIn || isSigningOut}
-          readOnly={!!user || isSigningIn || isSigningOut}
-          isReadOnly={!!user || isSigningIn || isSigningOut}
-          isDisabled={!!user || isSigningIn || isSigningOut}
+          value={userCredentials.email}
+          // disabled={!!user || isSigningIn || isSigningOut}
+          // readOnly={!!user || isSigningIn || isSigningOut}
+          // isReadOnly={!!user || isSigningIn || isSigningOut}
+          // isDisabled={!!user || isSigningIn || isSigningOut}
+          disabled={true}
+          readOnly={true}
+          isReadOnly={true}
+          isDisabled={true}
           required={true}
           isRequired={true}
         />
@@ -82,11 +99,15 @@ export default function Authentication() {
           type="password"
           name="password"
           label="Password"
-          value="example@email.com"
-          disabled={!!user || isSigningIn || isSigningOut}
-          readOnly={!!user || isSigningIn || isSigningOut}
-          isReadOnly={!!user || isSigningIn || isSigningOut}
-          isDisabled={!!user || isSigningIn || isSigningOut}
+          value={userCredentials.password}
+          // disabled={!!user || isSigningIn || isSigningOut}
+          // readOnly={!!user || isSigningIn || isSigningOut}
+          // isReadOnly={!!user || isSigningIn || isSigningOut}
+          // isDisabled={!!user || isSigningIn || isSigningOut}
+          disabled={true}
+          readOnly={true}
+          isReadOnly={true}
+          isDisabled={true}
           required={true}
           isRequired={true}
         />

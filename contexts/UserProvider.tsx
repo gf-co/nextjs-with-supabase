@@ -32,17 +32,20 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-      if (error) {
-        console.log("Get user from database failed");
-      } else {
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) throw error;
         setUser(user);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
+
     fetchUser();
   }, []);
 
