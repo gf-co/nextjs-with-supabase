@@ -84,32 +84,20 @@ export default function Authentication() {
           name="email"
           label="Email"
           value={userCredentials.email}
-          // disabled={!!user || isSigningIn || isSigningOut}
-          // readOnly={!!user || isSigningIn || isSigningOut}
-          // isReadOnly={!!user || isSigningIn || isSigningOut}
-          // isDisabled={!!user || isSigningIn || isSigningOut}
-          disabled={true}
-          readOnly={true}
-          isReadOnly={true}
-          isDisabled={true}
-          required={true}
-          isRequired={true}
+          disabled={!!user || isSigningIn || isSigningOut}
+          readOnly={!!user || isSigningIn || isSigningOut}
+          isReadOnly={!!user || isSigningIn || isSigningOut}
+          isDisabled={!!user || isSigningIn || isSigningOut}
         />
         <Input
           type="password"
           name="password"
           label="Password"
           value={userCredentials.password}
-          // disabled={!!user || isSigningIn || isSigningOut}
-          // readOnly={!!user || isSigningIn || isSigningOut}
-          // isReadOnly={!!user || isSigningIn || isSigningOut}
-          // isDisabled={!!user || isSigningIn || isSigningOut}
-          disabled={true}
-          readOnly={true}
-          isReadOnly={true}
-          isDisabled={true}
-          required={true}
-          isRequired={true}
+          disabled={!!user || isSigningIn || isSigningOut}
+          readOnly={!!user || isSigningIn || isSigningOut}
+          isReadOnly={!!user || isSigningIn || isSigningOut}
+          isDisabled={!!user || isSigningIn || isSigningOut}
         />
         <Button
           isLoading={isSigningIn}
