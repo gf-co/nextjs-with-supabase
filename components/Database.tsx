@@ -51,7 +51,7 @@ export default function Database() {
     };
 
     getData();
-  }, [user]);
+  }, [user, isLoading, showNotification, supabase]);
 
   const handleAddItem = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -159,7 +159,8 @@ export default function Database() {
   return (
     <div className="flex flex-col gap-4">
       <small className="text-sm opacity-50">
-        Uses Supabase's JS Client Library to interact with our Postgres database
+        Uses Supabase&apos;s JS Client Library to interact with our Postgres
+        database
       </small>
       {!items.length && (
         <p className="text-sm opacity-50">No items in the database yet</p>

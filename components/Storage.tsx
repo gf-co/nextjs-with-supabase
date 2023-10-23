@@ -171,7 +171,7 @@ export default function Storage() {
     };
 
     getImages();
-  }, [user]);
+  }, [user, isLoading, showNotification, supabase.storage]);
 
   if (isFetching) return <StorageSkeleton />;
 

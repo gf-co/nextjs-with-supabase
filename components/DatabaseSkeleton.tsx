@@ -9,7 +9,7 @@ export default function DatabaseSkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <small className="text-sm opacity-50">
-        Uses Supabase's JS Client Library to interact with our Postgres database
+        Uses Supabase&apos;s JS Client Library to interact with our Postgres database
       </small>
       <form className="flex flex-nowrap gap-1">
         <input type="hidden" name="itemId" />

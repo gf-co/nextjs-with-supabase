@@ -19,7 +19,7 @@ export const useUser = () => {
         error,
       } = await supabase.auth.getUser();
       if (error) {
-        console.log("Get user from database failed");
+        console.error("Get user from database failed");
       } else {
         setUser(user);
       }

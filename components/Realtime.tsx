@@ -45,7 +45,7 @@ export default function Realtime() {
     };
 
     getData();
-  }, [user]);
+  }, [user, isLoading, showNotification, supabase]);
 
   // Realtime listener for database changes. Automatically updates the items state.
   useEffect(() => {

@@ -48,7 +48,7 @@ export default function EdgeFunctions() {
     };
 
     getData();
-  }, [user]);
+  }, [user, isLoading, showNotification, supabase.functions]);
 
   const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // Follow this setup guide to integrate the Deno language server with your editor:
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
@@ -17,11 +19,7 @@ async function getTasks(supabaseClient: SupabaseClient, userId: string) {
     .select("*")
     .eq("user_id", userId);
 
-  console.log("data", JSON.stringify(data));
-
   if (error) throw error;
-
-  console.log("data", JSON.stringify(data));
 
   return new Response(JSON.stringify(data), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -105,7 +103,6 @@ Deno.serve(async (req) => {
       data: { user },
       error,
     } = await supabaseClient.auth.getUser();
-
 
     if (error) throw error;
 
