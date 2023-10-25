@@ -40,6 +40,8 @@ export default function Storage() {
       return;
     }
 
+    setIsUploading(true);
+
     const formData = new FormData(event.currentTarget);
     const imageFile = formData.get("imageFile") as File;
 

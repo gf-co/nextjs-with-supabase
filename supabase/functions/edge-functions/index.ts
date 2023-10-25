@@ -5,7 +5,7 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
-import { Database } from "@/lib/database.types.js";
+import { Database } from "../../../lib/database.types.ts";
 // import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import {
   createClient,
