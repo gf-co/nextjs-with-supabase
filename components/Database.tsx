@@ -25,11 +25,12 @@ export default function Database() {
 
   useEffect(() => {
     const getData = async () => {
-      if (!isLoading) {
+      if (isLoading) {
         return;
       }
 
       if (!user) {
+        setItems([]);
         setIsFetching(false);
         return;
       }
@@ -51,7 +52,8 @@ export default function Database() {
     };
 
     getData();
-  }, [user, isLoading, showNotification, supabase]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isLoading]);
 
   const handleAddItem = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

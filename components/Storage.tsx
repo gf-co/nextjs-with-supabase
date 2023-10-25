@@ -30,11 +30,12 @@ export default function Storage() {
   const handleAddImage = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isLoading) {
+    if (isLoading) {
       return;
     }
 
     if (!user) {
+      showNotification("User not signed in");
       setIsUploading(false);
       return;
     }
@@ -120,11 +121,12 @@ export default function Storage() {
 
   useEffect(() => {
     const getImages = async () => {
-      if (!isLoading) {
+      if (isLoading) {
         return;
       }
 
       if (!user) {
+        setImages([]);
         setIsFetching(false);
         return;
       }
@@ -147,19 +149,23 @@ export default function Storage() {
 
         const { data: signedUrls, error: signedUrlsError } =
           await supabase.storage.from(user.id).createSignedUrls(
-            data.map((fileObject) => `images/${fileObject.name}`),
+            data.map(
+              (fileObject: { name: string }) => `images/${fileObject.name}`,
+            ),
             60,
           );
 
         if (signedUrlsError) throw signedUrlsError;
 
         // @note - approach below assumes createSignedUrls returns the same order as the list
-        const images = data.map((fileObject, index) => ({
-          bucket: user.id,
-          filepath: `images/${fileObject.name}`,
-          filename: fileObject.name,
-          src: signedUrls[index].signedUrl,
-        }));
+        const images = data.map(
+          (fileObject: { name: string }, index: number) => ({
+            bucket: user.id,
+            filepath: `images/${fileObject.name}`,
+            filename: fileObject.name,
+            src: signedUrls[index].signedUrl,
+          }),
+        );
 
         setImages(images);
       } catch (error) {
@@ -171,7 +177,8 @@ export default function Storage() {
     };
 
     getImages();
-  }, [user, isLoading, showNotification, supabase.storage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isLoading]);
 
   if (isFetching) return <StorageSkeleton />;
 

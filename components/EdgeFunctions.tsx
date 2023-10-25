@@ -25,19 +25,25 @@ export default function EdgeFunctions() {
 
   useEffect(() => {
     const getData = async () => {
-      if (!isLoading) {
+      if (isLoading) {
         return;
       }
 
       if (!user) {
+        setTasks([]);
         setIsFetching(false);
         return;
       }
 
       try {
-        const { data } = await supabase.functions.invoke("edge-functions", {
-          method: "GET",
-        });
+        const { data, error } = await supabase.functions.invoke(
+          "edge-functions",
+          {
+            method: "GET",
+          },
+        );
+
+        if (error) throw error;
 
         return setTasks(data);
       } catch {
@@ -48,7 +54,8 @@ export default function EdgeFunctions() {
     };
 
     getData();
-  }, [user, isLoading, showNotification, supabase.functions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isLoading]);
 
   const handleAddTask = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
