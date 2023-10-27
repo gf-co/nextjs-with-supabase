@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js with Supabase
 
-## Getting Started
+- A React app to demo Supabase's capabilities.
+- Using tools with no vendor lock-in.
 
-First, run the development server:
+## Built with
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Jest
+- Cypress
+- MDX (Lets you write pages using Markdown.)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Live Demo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- https://nextjs-with-supabase-nine-zeta.vercel.app/
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Screenshots
 
-## Learn More
+<img src='https://github.com/gf-co/nextjs-with-supabase/assets/145439449/a0825b87-f332-42cd-a79c-dc648308ed7e' height='500'/>
 
-To learn more about Next.js, take a look at the following resources:
+## Videos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+https://github.com/gf-co/nextjs-with-supabase/assets/145439449/c0adc040-4659-4cb0-a3b9-31743c5946a9
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
