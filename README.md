@@ -6,9 +6,10 @@
 ## Built with
 
 - Next.js
+- Supabase
+- PostgreSQL
+- NextUI
 - TypeScript
-- Tailwind CSS
-- MDX (Lets you write pages using Markdown.)
 
 ## Live Demo
 
