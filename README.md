@@ -8,8 +8,6 @@
 - Next.js
 - TypeScript
 - Tailwind CSS
-- Jest
-- Cypress
 - MDX (Lets you write pages using Markdown.)
 
 ## Live Demo
