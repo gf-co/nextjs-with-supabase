@@ -1,7 +1,7 @@
 # Next.js with Supabase
 
 - A React app to demo Supabase's capabilities.
-- Using tools with no vendor lock-in.
+- Using tools without vendor lock-in.
 
 ## Built with
 
