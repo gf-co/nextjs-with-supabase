@@ -10,6 +10,7 @@
 - PostgreSQL
 - NextUI
 - TypeScript
+- SASS/CSS
 
 ## Live Demo
 
